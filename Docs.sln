@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Docs.Api", "Docs.Api\Docs.A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Docs.Test", "Docs.Test\Docs.Test.csproj", "{DD9BB8B6-67B2-428C-9A80-6652D5079554}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Docs.UI", "Docs.UI\Docs.UI.csproj", "{A854C006-AB48-4904-8AE5-4C02DD5E5C8F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Docs.UI", "Docs.UI\Docs.UI.csproj", "{A854C006-AB48-4904-8AE5-4C02DD5E5C8F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

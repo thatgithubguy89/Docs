@@ -2,6 +2,7 @@
 using Docs.UI.Models;
 using Docs.UI.Models.Responses;
 using Newtonsoft.Json;
+using System.Net.Http.Json;
 
 namespace Docs.UI.Services
 {
@@ -12,6 +13,11 @@ namespace Docs.UI.Services
         public DocumentService(HttpClient http)
         {
             _http = http;
+        }
+
+        public async Task AddDocumentAsync(Document document)
+        {
+            await _http.PostAsJsonAsync("http://localhost:7020/api/createdocument", document);
         }
 
         public async Task<List<Document>> GetAllDocumentsAsync()
