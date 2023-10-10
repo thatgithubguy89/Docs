@@ -1,5 +1,12 @@
 ﻿@page "/singledocument/{id}"
 
-<PageTitle>Document Name</PageTitle>
+<PageTitle>@document.Title</PageTitle>
 
-<RadzenHtmlEditor style="height: 600px;" />
+@if (document == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <RadzenHtmlEditor style="height: 600px;" @bind-Value="@document.Content" />
+}

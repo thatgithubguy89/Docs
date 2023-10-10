@@ -1,5 +1,6 @@
 ﻿using Docs.UI.Interfaces;
 using Docs.UI.Models;
+using Docs.UI.Models.Responses;
 using Newtonsoft.Json;
 
 namespace Docs.UI.Services
@@ -21,11 +22,26 @@ namespace Docs.UI.Services
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
-                var data = JsonConvert.DeserializeObject<OkObjectResult>(json);
+                var data = JsonConvert.DeserializeObject<OkObjectResultMultipleValues<Document>>(json);
                 documents = data?.Value ?? new List<Document>();
             }
 
             return documents;
+        }
+
+        public async Task<Document> GetDocumentByIdAsync(string id)
+        {
+            var document = new Document();
+
+            var response = await _http.GetAsync($"http://localhost:7020/api/singledocument/{id}");
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var data = JsonConvert.DeserializeObject<OkObjectResultSingleValue<Document>>(json);
+                document = data?.Value ?? new Document();
+            }
+
+            return document;
         }
     }
 }
