@@ -20,6 +20,11 @@ namespace Docs.UI.Services
             await _http.PostAsJsonAsync("http://localhost:7020/api/createdocument", document);
         }
 
+        public async Task DeleteDocumentAsync(string id)
+        {
+            await _http.DeleteAsync($"http://localhost:7020/api/{id}");
+        }
+
         public async Task<List<Document>> GetAllDocumentsAsync()
         {
             var documents = new List<Document>();
@@ -48,6 +53,11 @@ namespace Docs.UI.Services
             }
 
             return document;
+        }
+
+        public async Task UpdateDocumentAsync(string id, Document document)
+        {
+            await _http.PutAsJsonAsync($"http://localhost:7020/api/{id}", document);
         }
     }
 }

@@ -8,5 +8,14 @@
 }
 else
 {
-    <RadzenHtmlEditor style="height: 600px;" @bind-Value="@document.Content" />
+    <EditForm class="container" Model="@document" OnValidSubmit="UpdateDocument">
+        <InputText class="form-control w-50 mb-3" @bind-Value="@document.Title" />
+
+        <RadzenHtmlEditor style="height: 600px;" @bind-Value="@document.Content" />
+
+        <div class="mt-5 float-start">
+            <button type="submit" class="btn btn-primary me-5">Save<i class="bi bi-floppy ms-3"></i></button>
+            <button class="btn btn-danger me-5" @onclick="DeleteDocument">Delete<i class="bi bi-trash ms-3"></i></button>
+        </div>
+    </EditForm>
 }

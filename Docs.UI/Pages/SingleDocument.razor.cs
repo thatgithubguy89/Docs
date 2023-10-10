@@ -9,6 +9,9 @@ namespace Docs.UI.Pages
         [Inject]
         public IDocumentService DocumentService { get; set; }
 
+        [Inject]
+        public NavigationManager NavigationManager { get; set; }
+
         [Parameter]
         public string Id { get; set; }
 
@@ -17,6 +20,18 @@ namespace Docs.UI.Pages
         protected override async Task OnInitializedAsync()
         {
             document = await DocumentService.GetDocumentByIdAsync(Id);
+        }
+
+        private async Task DeleteDocument()
+        {
+            await DocumentService.DeleteDocumentAsync(document.Id);
+
+            NavigationManager.NavigateTo("/");
+        }
+
+        private async Task UpdateDocument()
+        {
+            await DocumentService.UpdateDocumentAsync(document.Id, document);
         }
     }
 }
