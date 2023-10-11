@@ -19,6 +19,8 @@ var host = new HostBuilder()
         services.AddAutoMapper(typeof(MappingProfile));
         services.AddScoped<IDocumentRepository, DocumentRepository>();
         services.AddScoped<IPdfService, PdfService>();
+        services.AddScoped(typeof(ICachingService<>), typeof(CachingService<>));
+        services.AddMemoryCache();
         services.AddDbContext<AppDbContext>(options =>
         {
             options.UseSqlServer(connectionString);

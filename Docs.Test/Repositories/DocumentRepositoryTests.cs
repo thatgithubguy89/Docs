@@ -3,6 +3,7 @@ using Docs.Api.Models;
 using Docs.Api.Repositories;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
+using Moq;
 using Shouldly;
 
 namespace Docs.Test.Repositories
@@ -10,6 +11,7 @@ namespace Docs.Test.Repositories
     public class DocumentRepositoryTests
     {
         IDocumentRepository _documentRepository;
+        Mock<ICachingService<Document>> _mockCachingService;
         IConfigurationRoot _configuration = new ConfigurationBuilder()
             .AddUserSecrets("4c4c151e-f5e0-442e-a38c-13941ba553cf")
             .Build();
@@ -32,7 +34,9 @@ namespace Docs.Test.Repositories
         [SetUp]
         public void Setup()
         {
-            _documentRepository = new DocumentRepository(_configuration);
+            _mockCachingService = new Mock<ICachingService<Document>>();
+
+            _documentRepository = new DocumentRepository(_configuration, _mockCachingService.Object);
 
             _cosmosClient = new CosmosClient(connectionString: _configuration["CosmosConnection"]);
         }
@@ -40,6 +44,8 @@ namespace Docs.Test.Repositories
         [TearDown]
         public async Task Teardown()
         {
+            _mockCachingService.Setup(c => c.GetItems(It.IsAny<string>()));
+
             var documents = await _documentRepository.GetAllDocumentsAsync();
 
             foreach (var document in documents)
@@ -51,6 +57,7 @@ namespace Docs.Test.Repositories
         [Test]
         public async Task AddDocumentAsync()
         {
+            _mockCachingService.Setup(c => c.DeleteItems(It.IsAny<string>()));
             var id = await _documentRepository.AddDocumentAsync(_mockDocument);
             var result = await _documentRepository.GetDocumentByIdAsync(id);
 
@@ -69,6 +76,7 @@ namespace Docs.Test.Repositories
         [Test]
         public async Task DeleteDocumentAsync()
         {
+            _mockCachingService.Setup(c => c.DeleteItems(It.IsAny<string>()));
             var id = await _documentRepository.AddDocumentAsync(_mockDocument);
             var document = await _documentRepository.GetDocumentByIdAsync(id);
             document.ShouldNotBeNull();
@@ -90,6 +98,7 @@ namespace Docs.Test.Repositories
         [Test]
         public async Task GetAllDocumentsAsync()
         {
+            _mockCachingService.Setup(c => c.SetItems(It.IsAny<string>(), It.IsAny<List<Document>>()));
             foreach (var document in _mockDocuments)
             {
                 await _container.CreateItemAsync(document, new PartitionKey(document.Id));
@@ -102,16 +111,41 @@ namespace Docs.Test.Repositories
         }
 
         [Test]
+        public async Task GetAllDocumentsAsync_CachedItemsFound()
+        {
+            _mockCachingService.Setup(c => c.GetItems(It.IsAny<string>())).Returns(_mockDocuments);
+
+            var result = await _documentRepository.GetAllDocumentsAsync();
+
+            result.ShouldBeOfType<List<Document>>();
+            result.Count.ShouldBe(_mockDocuments.Count);
+        }
+
+        [Test]
         public async Task GetDocumentByIdAsync()
         {
+            _mockCachingService.Setup(c => c.SetItem(It.IsAny<string>(), It.IsAny<Document>()));
             var id = await _documentRepository.AddDocumentAsync(_mockDocument);
 
             var result = await _documentRepository.GetDocumentByIdAsync(id);
 
             result.ShouldBeOfType<Document>();
             result.Id.ShouldBe(id);
-            result.Title.ShouldBe("test");
-            result.Content.ShouldBe("test");
+            result.Title.ShouldBe(_mockDocument.Title);
+            result.Content.ShouldBe(_mockDocument.Content);
+        }
+
+        [Test]
+        public async Task GetDocumentByIdAsync_CacheItemFound()
+        {
+            _mockCachingService.Setup(c => c.GetItem(It.IsAny<string>())).Returns(_mockDocument);
+
+            var result = await _documentRepository.GetDocumentByIdAsync(_mockDocument.Id);
+
+            result.ShouldBeOfType<Document>();
+            result.Id.ShouldBe(_mockDocument.Id);
+            result.Title.ShouldBe(_mockDocument.Title);
+            result.Content.ShouldBe(_mockDocument.Content);
         }
 
         [TestCase(null)]
@@ -125,6 +159,7 @@ namespace Docs.Test.Repositories
         [Test]
         public async Task UpdateDocumentAsync()
         {
+            _mockCachingService.Setup(c => c.DeleteItems(It.IsAny<string>()));
             Document updatedDocument = new Document { Id = "1", Title = "test2", Content = "test2" };
             await _documentRepository.AddDocumentAsync(_mockDocument);
 
