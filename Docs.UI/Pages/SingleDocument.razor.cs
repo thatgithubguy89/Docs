@@ -1,6 +1,7 @@
 ﻿using Docs.UI.Interfaces;
 using Docs.UI.Models;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace Docs.UI.Pages
 {
@@ -8,6 +9,12 @@ namespace Docs.UI.Pages
     {
         [Inject]
         public IDocumentService DocumentService { get; set; }
+
+        [Inject]
+        public IDownloadService DownloadService { get; set; }
+
+        [Inject]
+        public IJSRuntime JSRuntime { get; set; }
 
         [Inject]
         public NavigationManager NavigationManager { get; set; }
@@ -27,6 +34,16 @@ namespace Docs.UI.Pages
             await DocumentService.DeleteDocumentAsync(document.Id);
 
             NavigationManager.NavigateTo("/");
+        }
+
+        private async Task DownloadDocument()
+        {
+            var fileStream = await DownloadService.GetFileMemoryStream(document.Id);
+            var fileName = $"{document.Title}.pdf";
+
+            using var streamRef = new DotNetStreamReference(stream: fileStream);
+
+            await JSRuntime.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
         }
 
         private async Task UpdateDocument()

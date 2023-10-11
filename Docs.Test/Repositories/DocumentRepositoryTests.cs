@@ -51,11 +51,11 @@ namespace Docs.Test.Repositories
         [Test]
         public async Task AddDocumentAsync()
         {
-            await _documentRepository.AddDocumentAsync(_mockDocument);
-            var result = await _documentRepository.GetDocumentByIdAsync("1");
+            var id = await _documentRepository.AddDocumentAsync(_mockDocument);
+            var result = await _documentRepository.GetDocumentByIdAsync(id);
 
             result.ShouldBeOfType<Document>();
-            result.Id.ShouldBe(_mockDocument.Id);
+            result.Id.ShouldBe(id);
             result.Title.ShouldBe(_mockDocument.Title);
             result.Content.ShouldBe(_mockDocument.Content);
         }
@@ -69,12 +69,12 @@ namespace Docs.Test.Repositories
         [Test]
         public async Task DeleteDocumentAsync()
         {
-            await _documentRepository.AddDocumentAsync(_mockDocument);
-            var document = await _documentRepository.GetDocumentByIdAsync("1");
+            var id = await _documentRepository.AddDocumentAsync(_mockDocument);
+            var document = await _documentRepository.GetDocumentByIdAsync(id);
             document.ShouldNotBeNull();
 
-            await _documentRepository.DeleteDocumentAsync("1");
-            var result = await _documentRepository.GetDocumentByIdAsync("1");
+            await _documentRepository.DeleteDocumentAsync(id);
+            var result = await _documentRepository.GetDocumentByIdAsync(id);
 
             result.ShouldBeNull();
         }
@@ -94,7 +94,7 @@ namespace Docs.Test.Repositories
             {
                 await _container.CreateItemAsync(document, new PartitionKey(document.Id));
             }
-            
+
             var result = await _documentRepository.GetAllDocumentsAsync();
 
             result.ShouldBeOfType<List<Document>>();
@@ -104,12 +104,12 @@ namespace Docs.Test.Repositories
         [Test]
         public async Task GetDocumentByIdAsync()
         {
-            await _documentRepository.AddDocumentAsync(_mockDocument);
+            var id = await _documentRepository.AddDocumentAsync(_mockDocument);
 
-            var result = await _documentRepository.GetDocumentByIdAsync("1");
+            var result = await _documentRepository.GetDocumentByIdAsync(id);
 
             result.ShouldBeOfType<Document>();
-            result.Id.ShouldBe("1");
+            result.Id.ShouldBe(id);
             result.Title.ShouldBe("test");
             result.Content.ShouldBe("test");
         }

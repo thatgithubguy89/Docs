@@ -2,6 +2,7 @@ using Docs.Api.Data;
 using Docs.Api.Interfaces;
 using Docs.Api.Profiles;
 using Docs.Api.Repositories;
+using Docs.Api.Services;
 using Microsoft.Azure.Functions.Worker.Extensions.OpenApi.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +18,7 @@ var host = new HostBuilder()
     {
         services.AddAutoMapper(typeof(MappingProfile));
         services.AddScoped<IDocumentRepository, DocumentRepository>();
+        services.AddScoped<IPdfService, PdfService>();
         services.AddDbContext<AppDbContext>(options =>
         {
             options.UseSqlServer(connectionString);

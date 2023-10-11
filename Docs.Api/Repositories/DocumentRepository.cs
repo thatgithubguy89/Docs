@@ -21,7 +21,7 @@ namespace Docs.Api.Repositories
             _cosmosClient = new CosmosClient(connectionString: _configuration["CosmosConnection"]);
         }
 
-        public async Task AddDocumentAsync(Document document)
+        public async Task<string> AddDocumentAsync(Document document)
         {
             if (document == null)
                 throw new ArgumentNullException(nameof(document));
@@ -32,6 +32,8 @@ namespace Docs.Api.Repositories
             document.LastEditTime = DateTime.Now;
 
             await _container.CreateItemAsync(document, new PartitionKey(document.Id));
+
+            return document.Id;
         }
 
         public async Task DeleteDocumentAsync(string id)

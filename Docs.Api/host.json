@@ -11,6 +11,7 @@
   },
   "logLevel": {
     "default": "None",
-    "Docs.Api.DocumentsApi": "Information"
+    "Docs.Api.DocumentsApi": "Information",
+    "Docs.Api.PdfApi": "Information"
   }
 }

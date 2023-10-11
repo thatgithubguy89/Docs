@@ -3,7 +3,7 @@
 <PageTitle>Blank Document</PageTitle>
 
 <EditForm class="container" Model="@document" OnValidSubmit="AddDocument">
-    <InputText class="form-control w-50" @bind-Value="@document.Title" />
+    <InputText class="form-control w-50 mb-3" @bind-Value="@document.Title" />
 
     <RadzenHtmlEditor style="height: 600px;" @bind-Value="@document.Content" />
 
