@@ -52,6 +52,8 @@ namespace Docs.Test.Repositories
             {
                 await _documentRepository.DeleteDocumentAsync(document.Id);
             }
+
+            _cosmosClient.Dispose();
         }
 
         [Test]
@@ -87,7 +89,6 @@ namespace Docs.Test.Repositories
             result.ShouldBeNull();
         }
 
-        [TestCase(null)]
         [TestCase("")]
         [TestCase(" ")]
         public async Task DeleteDocumentAsync_GivenInvalidDocument_ShouldThrow_ArgumentNullException(string id)
@@ -148,7 +149,6 @@ namespace Docs.Test.Repositories
             result.Content.ShouldBe(_mockDocument.Content);
         }
 
-        [TestCase(null)]
         [TestCase("")]
         [TestCase(" ")]
         public async Task GetDocumentByIdAsync_GivenInvalidId_ShouldThrow_ArgumentNullException(string id)

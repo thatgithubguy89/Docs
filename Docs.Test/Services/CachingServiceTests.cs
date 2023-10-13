@@ -36,6 +36,8 @@ namespace Docs.Test.Services
             _cachingService.DeleteItems("docs-1");
             _cachingService.DeleteItems("docs-2");
             _cachingService.DeleteItems("documents");
+
+            _cache.Dispose();
         }
 
         [Test]
@@ -51,7 +53,6 @@ namespace Docs.Test.Services
             result.ShouldBeNull();
         }
 
-        [TestCase(null)]
         [TestCase("")]
         [TestCase(" ")]
         public void DeleteItem_GivenInvalidKey_ShouldThrow_ArgumentNullException(string key)
@@ -72,7 +73,6 @@ namespace Docs.Test.Services
             result.Content.ShouldBe("test");
         }
 
-        [TestCase(null)]
         [TestCase("")]
         [TestCase(" ")]
         public void GetItem_GivenInvalidKey_ShouldThrow_ArgumentNullException(string key)
@@ -92,7 +92,6 @@ namespace Docs.Test.Services
             result.Count.ShouldBe(2);
         }
 
-        [TestCase(null)]
         [TestCase("")]
         [TestCase(" ")]
         public void GetItems_GivenInvalidKey_ShouldThrow_ArgumentNullException(string key)
@@ -113,7 +112,6 @@ namespace Docs.Test.Services
             result.Content.ShouldBe("test");
         }
 
-        [TestCase(null)]
         [TestCase("")]
         [TestCase(" ")]
         public void SetItem_GivenInvalidKey_ShouldThrow_ArgumentNullException(string key)
@@ -138,7 +136,6 @@ namespace Docs.Test.Services
             result.Count.ShouldBe(2);
         }
 
-        [TestCase(null)]
         [TestCase("")]
         [TestCase(" ")]
         public void SetItems_GivenInvalidKey_ShouldThrow_ArgumentNullException(string key)

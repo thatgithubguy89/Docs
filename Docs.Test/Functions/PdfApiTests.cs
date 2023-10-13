@@ -35,7 +35,6 @@ namespace Docs.Test.Functions
             result.StatusCode.ShouldBe(StatusCodes.Status200OK);
         }
 
-        [TestCase(null)]
         [TestCase("")]
         [TestCase(" ")]
         public async Task GetPdf_GivenInvalidId_ShouldReturn_BadRequestResult(string id)

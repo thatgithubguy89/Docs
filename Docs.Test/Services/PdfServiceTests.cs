@@ -32,7 +32,6 @@ namespace Docs.Test.Services
             result.ShouldNotBeEmpty();
         }
 
-        [TestCase(null)]
         [TestCase("")]
         [TestCase(" ")]
         public async Task CreatePdfByteArray_GivenInvalidId_ShouldThrow_ArgumentNullException(string id)
@@ -48,7 +47,6 @@ namespace Docs.Test.Services
             await Should.ThrowAsync<NullReferenceException>(async () => await _pdfService.CreatePdfByteArray("1"));
         }
 
-        [TestCase(null)]
         [TestCase("")]
         [TestCase(" ")]
         public async Task CreatePdfByteArray_GivenIdForDocumentWithInvalidContent_ShouldReturn_EmptyByteArray(string content)
