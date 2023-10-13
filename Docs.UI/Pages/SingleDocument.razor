@@ -2,9 +2,9 @@
 
 <PageTitle>@document.Title</PageTitle>
 
-@if (document == null)
+@if (isLoading == true)
 {
-    <p>Loading...</p>
+    <Loader />
 }
 else
 {

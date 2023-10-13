@@ -2,18 +2,34 @@
 
 <PageTitle>Home</PageTitle>
 
-@if (documents == null)
+@if (isLoading == true)
 {
-    <p>Loading...</p>
+    <Loader />
 }
 else
 {
-    @foreach (var document in documents)
+    if (documents.Count == 0)
     {
-        <div class="col-md-3 text-center" style="display:inline-block">
-            <span class="bi bi-file-earmark-text" style="font-size: 100px; cursor:pointer" 
+        <p>You have no documents</p>
+    }
+    else
+    {
+        @foreach (var document in documents)
+        {
+            <div class="col-md-3 text-center" style="display:inline-block">
+                <span class="bi bi-file-earmark-text" style="font-size: 100px; cursor:pointer" 
                 @onclick="() => NavigateToSingleDocument(document.Id)"></span>
-            <p>@document.Title</p>
+                <p>@document.Title</p>
+            </div>
+        }
+
+        <div class="btn-toolbar justify-content-center mt-5" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group me-2" role="group" aria-label="First group">
+                @foreach (var i in pageList)
+                {
+                    <button type="button" class="btn btn-secondary" @onclick="() => GetDocuments(i)">@i</button>
+                }
+            </div>
         </div>
     }
 }

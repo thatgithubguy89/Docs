@@ -14,14 +14,35 @@ namespace Docs.UI.Pages
 
         private List<Document> documents = new List<Document>();
 
+        private List<int> pageList = new List<int>();
+
+        private int pageTotal = 1;
+
+        private bool isLoading = true;
+
         protected override async Task OnInitializedAsync()
         {
-            documents = await DocumentService.GetAllDocumentsAsync();
+            await GetDocuments();
+
+            for (int i = 0; i < pageTotal; i++)
+            {
+                pageList.Add(i + 1);
+            }
+
+            isLoading = false;
         }
 
         private void NavigateToSingleDocument(string id)
         {
             NavigationManager.NavigateTo($"/singledocument/{id}");
+        }
+
+        private async Task GetDocuments(int page = 1)
+        {
+            var response = await DocumentService.GetAllDocumentsAsync(page);
+
+            pageTotal = response.PageTotal;
+            documents = response.Payload;
         }
     }
 }

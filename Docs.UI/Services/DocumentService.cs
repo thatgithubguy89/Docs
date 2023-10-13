@@ -25,19 +25,19 @@ namespace Docs.UI.Services
             await _http.DeleteAsync($"http://localhost:7020/api/{id}");
         }
 
-        public async Task<List<Document>> GetAllDocumentsAsync()
+        public async Task<PageResponse<Document>> GetAllDocumentsAsync(int page)
         {
-            var documents = new List<Document>();
+            var pageResponse = new PageResponse<Document>();
 
-            var response = await _http.GetAsync("http://localhost:7020/api/alldocuments");
+            var response = await _http.GetAsync($"http://localhost:7020/api/alldocuments/{page}");
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
-                var data = JsonConvert.DeserializeObject<OkObjectResultMultipleValues<Document>>(json);
-                documents = data?.Value ?? new List<Document>();
+                var data = JsonConvert.DeserializeObject<OkObjectResultSingleValue<PageResponse<Document>>>(json);
+                pageResponse = data?.Value;
             }
 
-            return documents;
+            return pageResponse;
         }
 
         public async Task<Document> GetDocumentByIdAsync(string id)

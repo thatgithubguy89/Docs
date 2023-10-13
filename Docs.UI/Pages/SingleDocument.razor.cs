@@ -24,9 +24,13 @@ namespace Docs.UI.Pages
 
         private Document document = new Document();
 
+        private bool isLoading = true;
+
         protected override async Task OnInitializedAsync()
         {
             document = await DocumentService.GetDocumentByIdAsync(Id);
+
+            isLoading = false;
         }
 
         private async Task DeleteDocument()

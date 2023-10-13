@@ -20,20 +20,23 @@ namespace Docs.Api.Functions
         private readonly IDocumentRepository _documentRepository;
         private readonly ILogger<DocumentsApi> _logger;
         private readonly IMapper _mapper;
+        private readonly IPagingService<Document, DocumentDto> _pageService;
 
-        public DocumentsApi(IDocumentRepository documentRepository, ILogger<DocumentsApi> logger, IMapper mapper)
+        public DocumentsApi(IDocumentRepository documentRepository, ILogger<DocumentsApi> logger, IMapper mapper, IPagingService<Document, DocumentDto> pageService)
         {
             _documentRepository = documentRepository;
             _logger = logger;
             _mapper = mapper;
+            _pageService = pageService;
         }
 
         [OpenApiOperation(operationId: "GetAllDocuments", tags: new[] { "Documents" })]
+        [OpenApiParameter(name: "page")]
         [OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "code", In = OpenApiSecurityLocationType.None)]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(List<DocumentDto>), Description = "The OK response")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.BadRequest, contentType: "application/json", bodyType: typeof(BadRequestResult), Description = "The Bad Request response")]
         [Function("GetAllDocuments")]
-        public async Task<IActionResult> GetAllDocuments([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "alldocuments")] HttpRequestData req)
+        public async Task<IActionResult> GetAllDocuments([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "alldocuments/{page:int?}")] HttpRequestData req, int page)
         {
             _logger.LogInformation("Getting all documents.");
 
@@ -41,7 +44,9 @@ namespace Docs.Api.Functions
             {
                 var documents = await _documentRepository.GetAllDocumentsAsync();
 
-                return new OkObjectResult(_mapper.Map<List<DocumentDto>>(documents));
+                var pageResponse = _pageService.Page(documents, page);
+
+                return new OkObjectResult(pageResponse);
             }
             catch (Exception ex)
             {
@@ -98,7 +103,7 @@ namespace Docs.Api.Functions
                 using StreamReader streamReader = new StreamReader(req.Body);
                 var body = await streamReader.ReadToEndAsync();
                 var document = JsonConvert.DeserializeObject<DocumentDto>(body);
-                
+
                 if (document == null)
                     return new BadRequestResult();
 
